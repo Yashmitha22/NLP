@@ -12,19 +12,16 @@ import time
 
 class VoiceAssistant:
     def __init__(self):
-        # Initialize speech recognition
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
         
-        # Initialize text-to-speech engine
+       
         self.tts_engine = pyttsx3.init()
         self.setup_tts_voice()
         
-        # Assistant state
         self.is_listening = False
         self.wake_word = "hey assistant"
         
-        # Adjust for ambient noise
         print("Adjusting for ambient noise... Please wait.")
         with self.microphone as source:
             self.recognizer.adjust_for_ambient_noise(source)
@@ -33,13 +30,11 @@ class VoiceAssistant:
     def setup_tts_voice(self):
         """Configure text-to-speech voice settings"""
         voices = self.tts_engine.getProperty('voices')
-        # Try to set a female voice if available
         for voice in voices:
             if 'female' in voice.name.lower() or 'zira' in voice.name.lower():
                 self.tts_engine.setProperty('voice', voice.id)
                 break
         
-        # Set speech rate and volume
         self.tts_engine.setProperty('rate', 180)  # Speed of speech
         self.tts_engine.setProperty('volume', 0.9)  # Volume level (0.0 to 1.0)
     
@@ -78,11 +73,11 @@ class VoiceAssistant:
     def search_wikipedia(self, query: str) -> str:
         """Search Wikipedia for information"""
         try:
-            # Get a summary of the topic
+
             summary = wikipedia.summary(query, sentences=2)
             return f"According to Wikipedia: {summary}"
         except wikipedia.exceptions.DisambiguationError as e:
-            # If multiple results, take the first one
+         
             try:
                 summary = wikipedia.summary(e.options[0], sentences=2)
                 return f"According to Wikipedia: {summary}"
@@ -95,7 +90,6 @@ class VoiceAssistant:
     
     def get_weather(self, city: str = "London") -> str:
         """Get weather information (requires API key for full functionality)"""
-        # This is a placeholder - you would need to implement with a weather API
         return f"I would need a weather API key to get real weather data for {city}. This is a demo response."
     
     def open_website(self, url: str):
@@ -107,33 +101,27 @@ class VoiceAssistant:
         """Process voice commands and return appropriate responses"""
         command = command.lower().strip()
         
-        # Greetings
+        
         if any(word in command for word in ['hello', 'hi', 'hey']):
             return "Hello! How can I help you today?"
         
-        # Time queries
         elif any(word in command for word in ['time', 'clock', 'what time']):
             return self.get_current_time()
         
-        # Date queries
         elif any(word in command for word in ['date', 'today', 'what day']):
             today = datetime.datetime.now()
             return f"Today is {today.strftime('%A, %B %d, %Y')}"
         
-        # Wikipedia searches
         elif 'wikipedia' in command or 'search for' in command or 'tell me about' in command:
-            # Extract the search term
             search_terms = command.replace('wikipedia', '').replace('search for', '').replace('tell me about', '').strip()
             if search_terms:
                 return self.search_wikipedia(search_terms)
             else:
                 return "What would you like me to search for?"
         
-        # Weather queries
         elif 'weather' in command:
             return self.get_weather()
         
-        # Website opening
         elif 'open' in command and any(site in command for site in ['google', 'youtube', 'facebook', 'twitter']):
             if 'google' in command:
                 self.open_website('https://www.google.com')
@@ -166,7 +154,6 @@ class VoiceAssistant:
             # Extract numbers and operations
             import re
             
-            # Look for basic math patterns
             if 'plus' in command or '+' in command:
                 numbers = re.findall(r'\d+', command)
                 if len(numbers) >= 2:
